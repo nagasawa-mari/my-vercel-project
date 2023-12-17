@@ -1,7 +1,5 @@
 "use client"
-import { Span } from "next/dist/trace"
-import { title } from "process"
-import { useState } from "react"
+import { FormEvent, useState } from "react"
 
 type task = {
   id: number
@@ -30,9 +28,18 @@ const demoTasks: task[] = [
     done: true,
   },
 ]
+
 export default function Page() {
 
   const [tasks, setTasks] = useState<task[]>(demoTasks)
+
+  function addTask(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
+
+    const title = formData.get("title") as string //牛乳を買う
+    const endData = formData.get("end_date") as string // YYY-MM-DD
 
   setTasks([...tasks, {
     id: tasks.length + 1,
@@ -40,15 +47,21 @@ export default function Page() {
     end_date: endDate,
     done: false,
   }])
+}
 
   return (
-    <div className="p-8"
+    <div className="p-8">
       <h1 className="mb-4">ToDo管理アプリ</h1>
-     <form className="mb-8 spasce-x4" onSubmit={(add tasks)}
-      
+
+     <form className="mb-8 space-x4" onSubmit={(addTask)}>
+      <input type={"text"} name={"title"} />
+      <input type={"date"} name={"end_date"}/>
+      <input type="submit" value="Submit"/>
+      </form>
+  
       {tasks.map((item) => (
         <div key={item.id} className="flex gap-4">
-          <input type="checkbox" checked={item.done}></input>
+          <input type="checkbox" defaultChecked={item.done} onChange={() => (console.log("submit"))} />
           <span>{item.title}</span>
           <span>{item.end_date}</span>
         </div>
